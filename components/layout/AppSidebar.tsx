@@ -63,12 +63,8 @@ const navigation: NavSection[] = [
   {
     title: 'Developer Tools',
     items: [
-      { title: 'Documentation', href: '/dashboard/docs', icon: BookOpen },
-      { title: 'API Reference', href: '/dashboard/api', icon: Code },
       { title: 'Playground', href: '/dashboard/playground', icon: Blocks },
       { title: 'Widgets', href: '/dashboard/widgets', icon: Layers },
-      { title: 'Examples', href: '/dashboard/examples', icon: FileText },
-      { title: 'Changelog', href: '/dashboard/changelog', icon: Sparkles, badge: 'New' },
     ],
   },
   {
