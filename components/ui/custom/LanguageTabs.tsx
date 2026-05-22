@@ -1,6 +1,6 @@
 'use client';
 
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useState } from 'react';
 import { CodeBlock } from './CodeBlock';
 
 interface CodeExample {
@@ -16,20 +16,40 @@ interface LanguageTabsProps {
 }
 
 export function LanguageTabs({ examples, defaultLanguage }: LanguageTabsProps) {
+  const [activeTab, setActiveTab] = useState(defaultLanguage || examples[0]?.language);
+
   return (
-    <Tabs defaultValue={defaultLanguage || examples[0]?.language} className="w-full">
-      <TabsList className="bg-gray-100">
+    <div className="w-full">
+      {/* Modern Tab Bar */}
+      <div className="flex flex-wrap gap-2 mb-0">
         {examples.map((example) => (
-          <TabsTrigger key={example.language} value={example.language}>
+          <button
+            key={example.language}
+            onClick={() => setActiveTab(example.language)}
+            className={`
+              px-4 py-2 text-sm font-medium rounded-t-lg border-b-2 transition-all duration-200
+              ${activeTab === example.language
+                ? 'text-gray-900 border-gray-900 bg-white'
+                : 'text-gray-500 border-transparent bg-transparent hover:text-gray-900 hover:bg-gray-50'
+              }
+            `}
+          >
             {example.label}
-          </TabsTrigger>
+          </button>
         ))}
-      </TabsList>
-      {examples.map((example) => (
-        <TabsContent key={example.language} value={example.language} className="mt-4">
-          <CodeBlock code={example.code} language={example.language} filename={example.filename} />
-        </TabsContent>
-      ))}
-    </Tabs>
+      </div>
+
+      {/* Tab Content */}
+      <div className="relative">
+        {examples.map((example) => (
+          <div
+            key={example.language}
+            className={`${activeTab === example.language ? 'block' : 'hidden'}`}
+          >
+            <CodeBlock code={example.code} language={example.language} filename={example.filename} />
+          </div>
+        ))}
+      </div>
+    </div>
   );
 }
