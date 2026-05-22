@@ -1,7 +1,6 @@
 'use client';
 
 import { DocsSidebar } from './DocsSidebar';
-import { LandingNavbar } from '../home/LandingNavbar';
 import {
   SidebarProvider,
   SidebarInset,
@@ -15,28 +14,29 @@ import { Input } from '@/components/ui/input';
 
 export function DocsLayout({ children }: { children: React.ReactNode }) {
   return (
-    <>
-      <LandingNavbar />
-      <TooltipProvider>
-        <SidebarProvider>
-          <div className="flex min-h-screen w-full pt-16">
-            <DocsSidebar />
-            <SidebarInset>
-            <header className="sticky top-16 z-10 flex h-14 shrink-0 items-center gap-2 border-b bg-background px-4">
-              <SidebarTrigger className="-ml-1" />
-              <Separator orientation="vertical" className="mr-2 h-4" />
-              <div className="flex items-center gap-2 flex-1">
-                <div className="relative flex-1 max-w-md">
-                  <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500" />
+    <TooltipProvider>
+      <SidebarProvider>
+        <div className="flex min-h-screen w-full">
+          <DocsSidebar />
+          <SidebarInset>
+            <header className="sticky top-0 z-10 flex h-16 shrink-0 items-center gap-4 border-b border-gray-200 bg-white/80 backdrop-blur-md px-6 shadow-sm">
+              <SidebarTrigger className="-ml-1 hover:bg-gray-100 rounded-lg transition-colors" />
+              <Separator orientation="vertical" className="h-6" />
+              <div className="flex items-center gap-4 flex-1">
+                <div className="relative flex-1 max-w-xl">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                   <Input
                     type="search"
                     placeholder="Search documentation..."
-                    className="pl-8 h-9"
+                    className="pl-10 h-10 bg-gray-50 border-gray-200 focus:bg-white focus:border-pink-300 transition-all"
                   />
                 </div>
               </div>
-              <div className="ml-auto flex items-center gap-2">
-                <Button asChild size="sm" style={{ backgroundColor: '#CD1B78', color: 'white' }}>
+              <div className="flex items-center gap-3">
+                <Button asChild variant="outline" size="sm" className="hidden sm:flex">
+                  <a href="/login">Sign In</a>
+                </Button>
+                <Button asChild size="sm" className="text-white shadow-md hover:shadow-lg transition-all" style={{ backgroundColor: '#CD1B78' }}>
                   <a href="/signup">Get Started</a>
                 </Button>
               </div>
@@ -49,7 +49,6 @@ export function DocsLayout({ children }: { children: React.ReactNode }) {
           </SidebarInset>
         </div>
       </SidebarProvider>
-      </TooltipProvider>
-    </>
+    </TooltipProvider>
   );
 }

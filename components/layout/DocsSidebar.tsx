@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import {
   BookOpen,
@@ -72,38 +73,27 @@ const navigation: NavSection[] = [
     ],
   },
   {
-    title: 'Core Concepts',
+    title: 'API Reference',
     items: [
+      {
+        title: 'API Overview',
+        href: '/docs/api',
+        icon: BookOpen,
+      },
       {
         title: 'Authentication',
         href: '/docs/authentication',
         icon: Shield,
       },
       {
-        title: 'API Keys',
-        href: '/docs/api-keys',
+        title: 'Endpoints',
+        href: '/docs/endpoints',
         icon: Code,
       },
       {
-        title: 'Rate Limiting',
+        title: 'Rate Limits',
         href: '/docs/rate-limiting',
         icon: Blocks,
-      },
-    ],
-  },
-  {
-    title: 'API Reference',
-    items: [
-      {
-        title: 'Overview',
-        href: '/docs/api',
-        icon: BookOpen,
-        items: [
-          { title: 'Authentication API', href: '/docs/api/auth' },
-          { title: 'Social Posts API', href: '/docs/api/posts' },
-          { title: 'Analytics API', href: '/docs/api/analytics' },
-          { title: 'Webhooks API', href: '/docs/api/webhooks' },
-        ],
       },
     ],
   },
@@ -111,24 +101,19 @@ const navigation: NavSection[] = [
     title: 'Resources',
     items: [
       {
-        title: 'Examples',
+        title: 'Code Examples',
         href: '/docs/examples',
         icon: FileText,
-        items: [
-          { title: 'React Example', href: '/docs/examples/react' },
-          { title: 'Node.js Example', href: '/docs/examples/nodejs' },
-          { title: 'Python Example', href: '/docs/examples/python' },
-        ],
       },
       {
         title: 'Changelog',
         href: '/docs/changelog',
         icon: Sparkles,
-        badge: 'New',
+        badge: 'v2.1',
       },
       {
-        title: 'Community',
-        href: '/docs/community',
+        title: 'Support',
+        href: '/docs/support',
         icon: Users,
       },
     ],
@@ -139,21 +124,26 @@ export function DocsSidebar() {
   const pathname = usePathname();
 
   return (
-    <Sidebar collapsible="icon" variant="sidebar">
-      <SidebarHeader>
+    <Sidebar collapsible="icon" variant="sidebar" className="border-r border-gray-200">
+      <SidebarHeader className="border-b border-gray-100 pb-4">
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton size="lg" asChild>
-              <Link href="/docs" className="flex items-center gap-2">
-                <div
-                  className="flex aspect-square size-8 items-center justify-center rounded-lg text-sidebar-primary-foreground"
-                  style={{ backgroundColor: '#CD1B78' }}
-                >
-                  <BookOpen className="size-4 text-white" />
-                </div>
+            <SidebarMenuButton size="lg" asChild className="hover:bg-transparent">
+              <Link href="/" className="flex items-center gap-3 px-2">
+                <Image
+                  src="/images/urilogo-nobg.png"
+                  alt="URI Social"
+                  width={40}
+                  height={40}
+                  className="h-10 w-auto"
+                />
                 <div className="flex flex-col gap-0.5 leading-none">
-                  <span className="font-semibold" style={{ color: '#CD1B78' }}>URI Social</span>
-                  <span className="text-xs text-muted-foreground">Documentation</span>
+                  <span className="text-base font-bold text-gray-900">
+                    URI Social
+                  </span>
+                  <span className="text-[11px] font-medium text-gray-500 uppercase tracking-wide">
+                    Documentation
+                  </span>
                 </div>
               </Link>
             </SidebarMenuButton>
@@ -161,45 +151,45 @@ export function DocsSidebar() {
         </SidebarMenu>
       </SidebarHeader>
 
-      <SidebarContent>
-        {navigation.map((section) => (
-          <SidebarGroup key={section.title}>
-            <SidebarGroupLabel>{section.title}</SidebarGroupLabel>
+      <SidebarContent className="px-2 py-4">
+        {navigation.map((section, index) => (
+          <SidebarGroup key={section.title} className={index > 0 ? 'mt-6' : ''}>
+            <SidebarGroupLabel className="px-3 mb-2 text-[11px] font-bold uppercase tracking-wider text-gray-500">
+              {section.title}
+            </SidebarGroupLabel>
             <SidebarGroupContent>
-              <SidebarMenu>
+              <SidebarMenu className="space-y-0.5">
                 {section.items.map((item) => {
-                  const isActive = pathname === item.href || pathname?.startsWith(item.href + '/');
+                  const isActive = pathname === item.href;
                   const Icon = item.icon;
 
                   return (
                     <SidebarMenuItem key={item.href}>
-                      <SidebarMenuButton asChild isActive={isActive} tooltip={item.title}>
-                        <Link href={item.href}>
-                          <Icon />
-                          <span>{item.title}</span>
+                      <SidebarMenuButton
+                        asChild
+                        isActive={isActive}
+                        tooltip={item.title}
+                        className={`
+                          relative px-3 py-2.5 rounded-lg transition-all duration-200
+                          ${isActive
+                            ? 'bg-pink-50 text-[#CD1B78] font-semibold shadow-sm border border-pink-100'
+                            : 'hover:bg-gray-50 text-gray-700 hover:text-gray-900'
+                          }
+                        `}
+                      >
+                        <Link href={item.href} className="flex items-center gap-3 w-full">
+                          <Icon className={`size-4 ${isActive ? 'text-[#CD1B78]' : 'text-gray-500'}`} />
+                          <span className="text-sm flex-1">{item.title}</span>
                           {item.badge && (
-                            <span className="ml-auto px-1.5 py-0.5 text-xs font-semibold rounded-md bg-pink-100 text-pink-700">
+                            <span className="px-2 py-0.5 text-[10px] font-bold rounded-full text-white shadow-sm" style={{ backgroundColor: '#CD1B78' }}>
                               {item.badge}
                             </span>
                           )}
+                          {isActive && (
+                            <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 rounded-r-full" style={{ backgroundColor: '#CD1B78' }} />
+                          )}
                         </Link>
                       </SidebarMenuButton>
-                      {item.items && item.items.length > 0 && (
-                        <SidebarMenuSub>
-                          {item.items.map((subItem) => {
-                            const isSubActive = pathname === subItem.href;
-                            return (
-                              <SidebarMenuSubItem key={subItem.href}>
-                                <SidebarMenuSubButton asChild isActive={isSubActive}>
-                                  <Link href={subItem.href}>
-                                    <span>{subItem.title}</span>
-                                  </Link>
-                                </SidebarMenuSubButton>
-                              </SidebarMenuSubItem>
-                            );
-                          })}
-                        </SidebarMenuSub>
-                      )}
                     </SidebarMenuItem>
                   );
                 })}
@@ -209,13 +199,19 @@ export function DocsSidebar() {
         ))}
       </SidebarContent>
 
-      <SidebarFooter>
+      <SidebarFooter className="border-t border-gray-100 p-4">
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton asChild>
-              <Link href="/signup" className="bg-pink-50 hover:bg-pink-100">
-                <GitBranch />
-                <span>Get Started Free</span>
+            <SidebarMenuButton asChild className="h-auto p-0 hover:bg-transparent">
+              <Link
+                href="/signup"
+                className="w-full px-4 py-3 rounded-xl font-semibold text-sm text-white shadow-lg transition-all duration-200 hover:shadow-xl hover:scale-[1.02] active:scale-[0.98]"
+                style={{ backgroundColor: '#CD1B78' }}
+              >
+                <div className="flex items-center justify-center gap-2 w-full">
+                  <Zap className="size-4" />
+                  <span>Get Started Free</span>
+                </div>
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
