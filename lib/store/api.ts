@@ -27,6 +27,7 @@ export interface SignupRequest {
 export interface AuthResponse {
   message: string;
   email: string;
+  requires_verification?: boolean;
 }
 
 export interface APIKey {
