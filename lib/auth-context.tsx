@@ -14,9 +14,9 @@ interface Developer {
 interface AuthContextType {
   developer: Developer | null;
   isLoading: boolean;
-  login: (accessToken: string, refreshToken: string) => void;
+  login: () => void;
   logout: () => void;
-  getAccessToken: () => string | null;
+  refreshProfile: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -27,21 +27,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const router = useRouter();
 
   useEffect(() => {
-    // Check if user is logged in on mount
-    const token = localStorage.getItem('access_token');
-    if (token) {
-      fetchDeveloperProfile(token);
-    } else {
-      setIsLoading(false);
-    }
+    // Check if user is logged in on mount by fetching profile (uses cookies)
+    fetchDeveloperProfile();
   }, []);
 
-  const fetchDeveloperProfile = async (token: string) => {
+  const fetchDeveloperProfile = async (token?: string) => {
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/developers/me`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://sdk-gateway.urisocial.com'}/api/v1/auth/me`, {
+        credentials: 'include', // Use cookies for auth
       });
 
       if (response.ok) {
@@ -59,25 +52,34 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const login = (accessToken: string, refreshToken: string) => {
-    localStorage.setItem('access_token', accessToken);
-    localStorage.setItem('refresh_token', refreshToken);
-    fetchDeveloperProfile(accessToken);
+  const login = () => {
+    // Cookies are already set by the server, just fetch the profile
+    fetchDeveloperProfile();
   };
 
-  const logout = () => {
+  const logout = async () => {
+    try {
+      // Call backend logout to clear cookies
+      await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://sdk-gateway.urisocial.com'}/api/v1/auth/logout`, {
+        method: 'POST',
+        credentials: 'include',
+      });
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
+    // Clear local state
     localStorage.removeItem('access_token');
     localStorage.removeItem('refresh_token');
     setDeveloper(null);
     router.push('/login');
   };
 
-  const getAccessToken = () => {
-    return localStorage.getItem('access_token');
+  const refreshProfile = () => {
+    fetchDeveloperProfile();
   };
 
   return (
-    <AuthContext.Provider value={{ developer, isLoading, login, logout, getAccessToken }}>
+    <AuthContext.Provider value={{ developer, isLoading, login, logout, refreshProfile }}>
       {children}
     </AuthContext.Provider>
   );
